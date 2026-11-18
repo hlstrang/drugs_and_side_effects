@@ -98,6 +98,23 @@ LENGTH_CONSTRAINTS = {
     "max_words_per_effect": 5,
 }
 
+# Phrases to remove before any splitting occurs to catch leftover HTML/JS code
+PRE_SPLIT_PATTERNS = [
+    r'https?://\S+',
+    r'\bwww\.[a-z0-9.-]+\.[a-z]{2,}\S*',
+    r'\bfunction\b[^;}{]*',
+    r'\bvar\s+[^;]*;',
+    r'@?[a-z_$][\w$]*\.(?:push|append|appendChild|'
+    r'removeChild|getElementById|querySelector|'
+    r'addEventListener|setAttribute|createElement)'
+    r'\s*\([^;]{0,200}',
+    r'\b(?:window|document)\.\w+',
+    r'\bdataLayer\b|\bgoogle_tag|\bgpt\b',
+    r'\bconsole\.\w+\s*\([^;]{0,200}',
+    r'\b(?:get|set)Time(?:out)?\b',
+    r'\b(?:if|else|return|try|catch|new)\b(?=\s*[\(\w])',
+]
+
 # Strips lead-ins that prefix many side effect strings
 LEAD_IN_RE = re.compile(
     r"^(get emergency medical help|seek medical (treatment|help|attention)"
@@ -293,7 +310,7 @@ LOWER_UPPER_RE = re.compile(
 
 # Sepearators found: periods, semicolons, commas, colons, '-', and '--'
 SEPARATOR_RE = r"[.;,:]|\n|\s-\s|-{2,}|•"
-
+PRE_SPLIT_REGEX = re.compile("|".join(PRE_SPLIT_PATTERNS), re.I)
 INGREDIENT_REGEX = re.compile("|".join(INGREDIENT_PATTERNS), re.I)
 BOILERPLATE_REGEX = re.compile("|".join(BOILERPLATE_PATTERNS), re.I)
 JUNK_REGEX = re.compile(r"\b(?:" + "|".join(JUNK_KEYWORDS) + r")\b", re.I)
@@ -301,6 +318,11 @@ CODE_REGEX = re.compile("|".join(CODE_CONFIG_PATTERNS), re.I)
 ALPHANUMERIC_MIX_PATTERN = re.compile(
     r'^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$', re.I
 )
+
+def strip_code_segments(text: str) -> str:
+    if not isinstance(text, str):
+        return text
+    return PRE_SPLIT_REGEX.sub(" ", text)
 
 def clean_cell(text: str) -> str:
     """First stage cleaning, applied to each raw term right after splitting.

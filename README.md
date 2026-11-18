@@ -14,5 +14,7 @@ The dataset contains data about drugs scraped from Drugs.com by [Nalia Srivastav
 ## Data Cleaning
 The dataset was first cleaned and filtered, using Pandas to drop the stray and unnamed columns due to misformatting and also ensuring the rating and review columns are numerical. This was then saved to a new dataframe.
 
-The side effect column also had to be cleaned to create a long dataset comprising of one row for each side effect in each drug. This was expanded each time downstream code was run if more non-side effect strings were detected. 
+The side effect column also had to be cleaned to create a long dataset comprising of one row for each side effect in each drug. Terms were clustered with similar terms using DBSCAN (cosine distance). For example, 'difficulty breathing' and 'breathing difficulty' were compressed into one cluster. The smallest term by character was used and every term in the cluster was changed to this.
+
+This clustering method was repeated three times until I was happy the clusters formed were all valid clusters. The final merge required manual checking and deduplication to achieve the one row for each side effect dataset. The full code with notes written can be found [here](/text_cleaning.py). 
 
