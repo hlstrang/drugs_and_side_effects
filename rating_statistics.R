@@ -12,8 +12,6 @@ library(emmeans)
 library(lme4)
 library(performance)
 
-setwd("Documents/programming/drugs_and_side_effects")
-
 set.seed(42)
 
 df <- read_csv("stats_df.csv")
@@ -57,7 +55,7 @@ ggplot(dat, aes(x = n_side_effects, y = p_rating)) +
 m1 <- ordbetareg(
   bf(p_rating ~ n_side_effects + log(no_of_reviews + 1) + medical_condition,
      phi      ~ n_side_effects + log(no_of_reviews + 1) + medical_condition),
-  phi_reg = "both",   
+  phi_reg = "both",
   data = dat)
 summary(m1)
 
@@ -65,7 +63,7 @@ summary(m1)
 sim_res <- simulateResiduals(m1, plot = TRUE)
 
 # Effect of number of side effects on the original 0-10 scale
-emm1 <- emmeans(m1, ~ n_side_effects, 
+emm1 <- emmeans(m1, ~ n_side_effects,
                 at = list(n_side_effects = c(5, 10,15, 20,25, 30)))
 emm1_df <- as.data.frame(emm1) %>%
   mutate(rating_10 = emmean * 10,
@@ -78,7 +76,7 @@ ggplot(emm1_df, aes(x = n_side_effects, y = rating_10)) +
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = lower_10, ymax = upper_10),
                 width = 1) +
-  labs(x = "Number of side effects", 
+  labs(x = "Number of side effects",
        y = "Expected rating on 0-10 scale (95% CI)") +
   theme_basic()
 
@@ -95,7 +93,7 @@ cv_r2 <- map_dbl(1:5, function(k) {
   test <- rf_data[folds == k, ]
   rf <- randomForest(p_rating ~ medical_condition + drug_class +
                        no_of_reviews + pregnancy_category + csa +
-                       rx_otc + n_side_effects, 
+                       rx_otc + n_side_effects,
                      data = train)
   pred <- predict(rf, test)
   1 - sum((test$p_rating - pred)^2) / sum((test$p_rating - mean(test$p_rating))^2)
@@ -105,6 +103,7 @@ cat("Mean 5-fold CV R2:", round(mean(cv_r2), 3))
 
 rf_full <- randomForest(p_rating ~ medical_condition + drug_class +
                           no_of_reviews + pregnancy_category + csa +
-                          rx_otc + n_side_effects, 
+                          rx_otc + n_side_effects,
                         data = rf_data, importance = TRUE)
+print(rf_full)
 importance(rf_full)
