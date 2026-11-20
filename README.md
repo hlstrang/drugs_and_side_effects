@@ -5,7 +5,7 @@
 [Licence](https://creativecommons.org/publicdomain/zero/1.0/)
 
 ## About
-The dataset contains data about drugs scraped from Drugs.com by [Nalia Srivastava](https://github.com/Naila-Srivastava). Columns included are drug names (both generic and branded), ratings, number of reviews, side effects, prescription status and more. The aim of this project was to perform Exploratory Data Analysis (EDA) to generate preliminary graphs and visualisations, then perform more in depth analysis about the side effects associated with each drug and medical condition.
+The dataset contains data about drugs scraped from Drugs.com by [Nalia Srivastava](https://github.com/Naila-Srivastava). Columns included are drug names (both generic and branded), ratings, number of reviews, side effects, prescription status and more. The aim of this project was to perform Exploratory Data Analysis (EDA) to generate preliminary graphs and visualisations, then perform more in depth analysis about the variation in rating.
 
 ## Tools
  - Python (Pandas, NumPy, Seaborn, Matplotlib)
@@ -27,5 +27,5 @@ I also examined how many rows contained the top 200 most common side effects (77
 ## Statistics
 I performed ordered beta regression with rating as the response variable to see if any of the variables could explain the variation in rating. The ordered beta regression instead of classic GLM restricts the predictions to 0-10 as those are the only available ratings possible.
 
-Random Forest model found that the variables available only explained 25.76% of the variation in rating, which is not surprising as humans are very messy. 
+Random Forest model found that the variables available only explained 25.76% of the variation in rating, which is not surprising as humans are very messy.
 
